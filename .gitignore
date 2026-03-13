@@ -1,0 +1,16 @@
+build/
+*.o
+*.a
+*.so
+*.dylib
+*.duckdb_extension
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+*.db
+*.duckdb

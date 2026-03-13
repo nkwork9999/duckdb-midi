@@ -1,0 +1,48 @@
+# name: test/sql/midi.test
+# description: test midi extension
+# group: [sql]
+
+# Before we load the extension, this will fail
+statement error
+SELECT midi_note_name(60);
+----
+Catalog Error: Scalar Function with name midi_note_name does not exist!
+
+# Require statement will ensure this test is run with this extension loaded
+require midi
+
+# Scalar functions
+query I
+SELECT midi_note_name(60);
+----
+C4
+
+query I
+SELECT midi_note_name(69);
+----
+A4
+
+query I
+SELECT midi_note_number('C4');
+----
+60
+
+query I
+SELECT midi_note_number('A4');
+----
+69
+
+query R
+SELECT round(midi_note_freq(69), 1);
+----
+440.0
+
+query I
+SELECT midi_bpm_to_uspqn(120.0::DOUBLE);
+----
+500000
+
+query R
+SELECT midi_uspqn_to_bpm(500000::BIGINT);
+----
+120.0
