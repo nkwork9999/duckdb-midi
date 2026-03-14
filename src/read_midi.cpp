@@ -73,15 +73,18 @@ struct ReadMidiBindData : public TableFunctionData {
 					e.channel = mev.getChannel();
 					e.key = mev[1];     // controller number
 					e.velocity = mev[2]; // value
-				} else if (mev.isProgramChange()) {
+				} else if (mev.size() > 0 && (mev[0] & 0xF0) == 0xC0) {
+					// Program Change
 					e.event_type = "program_change";
-					e.channel = mev.getChannel();
-					e.key = mev[1]; // program number
+					e.channel = mev[0] & 0x0F;
+					e.key = mev.size() > 1 ? mev[1] : 0; // program number
 					e.velocity = 0;
 				} else if (mev.isPitchbend()) {
 					e.event_type = "pitch_bend";
 					e.channel = mev.getChannel();
-					e.key = mev.getP1() | (mev.getP2() << 7);
+					int lsb = mev.size() > 1 ? mev[1] : 0;
+					int msb = mev.size() > 2 ? mev[2] : 0;
+					e.key = lsb | (msb << 7);
 					e.velocity = 0;
 				} else if (mev.isMeta()) {
 					e.event_type = "meta";

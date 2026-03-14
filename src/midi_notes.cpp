@@ -66,17 +66,20 @@ struct MidiNotesBindData : public TableFunctionData {
 				n.note_name = std::string(NOTES_NOTE_NAMES[pitch_class]) + std::to_string(octave);
 
 				// Find linked note-off
-				int link = mev.getLinkedIndex();
-				if (link >= 0 && link < midifile[track].size()) {
-					auto &off_ev = midifile[track][link];
-					n.end_tick = off_ev.tick;
-					n.end_sec = off_ev.seconds;
+				if (mev.isLinked()) {
+					auto *off_ev = mev.getLinkedEvent();
+					if (off_ev) {
+						n.end_tick = off_ev->tick;
+						n.end_sec = off_ev->seconds;
+					} else {
+						n.end_tick = n.start_tick;
+						n.end_sec = n.start_sec;
+					}
 				} else {
-					// No linked note-off found, use same as start
 					n.end_tick = n.start_tick;
 					n.end_sec = n.start_sec;
 				}
-				n.duration_sec = n.end_sec - n.start_sec;
+				n.duration_sec = mev.getDurationInSeconds();
 
 				notes.push_back(std::move(n));
 			}

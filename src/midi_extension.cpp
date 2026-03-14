@@ -18,6 +18,9 @@ void MidiExtension::Load(ExtensionLoader &loader) {
 
 	// Playback functions
 	RegisterMidiPlaybackFunctions(loader);
+
+	// Write/generate functions
+	RegisterMidiWriteFunctions(loader);
 }
 
 std::string MidiExtension::Name() {

@@ -18,6 +18,7 @@ set(EXTENSION_SOURCES
     src/midi_meta.cpp
     src/midi_scalar.cpp
     src/midi_playback.cpp
+    src/midi_write.cpp
     ${MIDIFILE_SOURCES}
 )
 
@@ -34,9 +35,10 @@ target_include_directories(${LOADABLE_EXTENSION_NAME} PRIVATE third_party/midifi
 if(APPLE)
     find_library(AUDIOTOOLBOX AudioToolbox)
     find_library(COREAUDIO CoreAudio)
-    if(AUDIOTOOLBOX AND COREAUDIO)
-        target_link_libraries(${EXTENSION_NAME} ${AUDIOTOOLBOX} ${COREAUDIO})
-        target_link_libraries(${LOADABLE_EXTENSION_NAME} ${AUDIOTOOLBOX} ${COREAUDIO})
+    find_library(COREFOUNDATION CoreFoundation)
+    if(AUDIOTOOLBOX AND COREAUDIO AND COREFOUNDATION)
+        target_link_libraries(${EXTENSION_NAME} ${AUDIOTOOLBOX} ${COREAUDIO} ${COREFOUNDATION})
+        target_link_libraries(${LOADABLE_EXTENSION_NAME} ${AUDIOTOOLBOX} ${COREAUDIO} ${COREFOUNDATION})
         target_compile_definitions(${EXTENSION_NAME} PRIVATE MIDI_PLAYBACK_MACOS)
         target_compile_definitions(${LOADABLE_EXTENSION_NAME} PRIVATE MIDI_PLAYBACK_MACOS)
     endif()

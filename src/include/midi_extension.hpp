@@ -17,5 +17,6 @@ void RegisterReadMidiFunction(ExtensionLoader &loader);
 void RegisterMidiNotesFunction(ExtensionLoader &loader);
 void RegisterMidiMetaFunction(ExtensionLoader &loader);
 void RegisterMidiPlaybackFunctions(ExtensionLoader &loader);
+void RegisterMidiWriteFunctions(ExtensionLoader &loader);
 
 } // namespace duckdb
