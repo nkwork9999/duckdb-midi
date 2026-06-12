@@ -76,7 +76,7 @@ WHERE meta_type = 'time_signature';
 # midi_gen -> read_midi -> midi_notes roundtrip.
 query I
 SELECT CASE
-       WHEN midi_gen('/tmp/duckdb_midi_scale_test.mid', 'scale') LIKE 'Generated scale:%'
+       WHEN midi_gen('__TEST_DIR__/duckdb_midi_scale_test.mid', 'scale') LIKE 'Generated scale:%'
        THEN 1 ELSE 0 END;
 ----
 1
@@ -84,7 +84,7 @@ SELECT CASE
 query II
 SELECT COUNT(*)::INTEGER AS note_on_events,
        COUNT(DISTINCT key)::INTEGER AS distinct_notes
-FROM read_midi('/tmp/duckdb_midi_scale_test.mid')
+FROM read_midi('__TEST_DIR__/duckdb_midi_scale_test.mid')
 WHERE event_type = 'note_on';
 ----
 15	8
@@ -93,14 +93,14 @@ query III
 SELECT COUNT(*)::INTEGER AS notes,
        MIN(note)::INTEGER AS lowest,
        MAX(note)::INTEGER AS highest
-FROM midi_notes('/tmp/duckdb_midi_scale_test.mid');
+FROM midi_notes('__TEST_DIR__/duckdb_midi_scale_test.mid');
 ----
 15	60	72
 
 # midi_write -> midi_notes roundtrip.
 query I
 SELECT CASE
-       WHEN midi_write('/tmp/duckdb_midi_written_test.mid',
+       WHEN midi_write('__TEST_DIR__/duckdb_midi_written_test.mid',
                        [60, 64, 67],
                        [0.25::DOUBLE, 0.5::DOUBLE, 1.0::DOUBLE],
                        [80, 70, 90],
@@ -113,6 +113,6 @@ query III
 SELECT COUNT(*)::INTEGER AS notes,
        MIN(note)::INTEGER AS lowest,
        MAX(note)::INTEGER AS highest
-FROM midi_notes('/tmp/duckdb_midi_written_test.mid');
+FROM midi_notes('__TEST_DIR__/duckdb_midi_written_test.mid');
 ----
 3	60	67
