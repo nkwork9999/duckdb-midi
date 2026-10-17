@@ -92,7 +92,7 @@ struct MidiNotesState : public GlobalTableFunctionState {
 };
 
 static unique_ptr<FunctionData> MidiNotesBind(ClientContext &context, TableFunctionBindInput &input,
-                                               vector<LogicalType> &return_types, vector<string> &names) {
+                                               vector<LogicalType> &return_types, vector<Identifier> &names) {
 	names = {"track_id", "channel", "note", "note_name", "velocity",
 	         "start_tick", "end_tick", "start_sec", "end_sec", "duration_sec"};
 	return_types = {LogicalType::INTEGER, LogicalType::INTEGER, LogicalType::INTEGER,

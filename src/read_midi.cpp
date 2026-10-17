@@ -109,7 +109,7 @@ struct ReadMidiState : public GlobalTableFunctionState {
 };
 
 static unique_ptr<FunctionData> ReadMidiBind(ClientContext &context, TableFunctionBindInput &input,
-                                              vector<LogicalType> &return_types, vector<string> &names) {
+                                              vector<LogicalType> &return_types, vector<Identifier> &names) {
 	names = {"track_id", "tick", "time_sec", "event_type", "channel", "key", "velocity", "raw_hex"};
 	return_types = {LogicalType::INTEGER, LogicalType::BIGINT,  LogicalType::DOUBLE,
 	                LogicalType::VARCHAR, LogicalType::INTEGER, LogicalType::INTEGER,

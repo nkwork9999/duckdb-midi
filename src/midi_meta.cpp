@@ -142,7 +142,7 @@ struct MidiMetaState : public GlobalTableFunctionState {
 };
 
 static unique_ptr<FunctionData> MidiMetaBind(ClientContext &context, TableFunctionBindInput &input,
-                                              vector<LogicalType> &return_types, vector<string> &names) {
+                                              vector<LogicalType> &return_types, vector<Identifier> &names) {
 	names = {"track_id", "tick", "time_sec", "meta_type", "text_value", "num_value"};
 	return_types = {LogicalType::INTEGER, LogicalType::BIGINT, LogicalType::DOUBLE,
 	                LogicalType::VARCHAR, LogicalType::VARCHAR, LogicalType::DOUBLE};
