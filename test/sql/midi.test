@@ -46,3 +46,73 @@ query R
 SELECT midi_uspqn_to_bpm(500000::BIGINT);
 ----
 120.0
+
+# Read a bundled MIDI fixture and verify note extraction.
+query III
+SELECT COUNT(*)::INTEGER AS notes,
+       MIN(note)::INTEGER AS lowest,
+       MAX(note)::INTEGER AS highest
+FROM midi_notes('test_data/test_scale.mid');
+----
+8	60	72
+
+# Meta events: tempo is 120 BPM and the fixture declares 4/4.
+query IR
+SELECT COUNT(*)::INTEGER AS tempo_events,
+       ROUND(MAX(num_value), 1) AS bpm
+FROM midi_meta('test_data/test_scale.mid')
+WHERE meta_type = 'tempo';
+----
+1	120.0
+
+query IT
+SELECT COUNT(*)::INTEGER AS time_signature_events,
+       MAX(text_value) AS signature
+FROM midi_meta('test_data/test_scale.mid')
+WHERE meta_type = 'time_signature';
+----
+1	4/4
+
+# midi_gen -> read_midi -> midi_notes roundtrip.
+query I
+SELECT CASE
+       WHEN midi_gen('__TEST_DIR__/duckdb_midi_scale_test.mid', 'scale') LIKE 'Generated scale:%'
+       THEN 1 ELSE 0 END;
+----
+1
+
+query II
+SELECT COUNT(*)::INTEGER AS note_on_events,
+       COUNT(DISTINCT key)::INTEGER AS distinct_notes
+FROM read_midi('__TEST_DIR__/duckdb_midi_scale_test.mid')
+WHERE event_type = 'note_on';
+----
+15	8
+
+query III
+SELECT COUNT(*)::INTEGER AS notes,
+       MIN(note)::INTEGER AS lowest,
+       MAX(note)::INTEGER AS highest
+FROM midi_notes('__TEST_DIR__/duckdb_midi_scale_test.mid');
+----
+15	60	72
+
+# midi_write -> midi_notes roundtrip.
+query I
+SELECT CASE
+       WHEN midi_write('__TEST_DIR__/duckdb_midi_written_test.mid',
+                       [60, 64, 67],
+                       [0.25::DOUBLE, 0.5::DOUBLE, 1.0::DOUBLE],
+                       [80, 70, 90],
+                       120.0::DOUBLE) LIKE 'Written 3 notes%'
+       THEN 1 ELSE 0 END;
+----
+1
+
+query III
+SELECT COUNT(*)::INTEGER AS notes,
+       MIN(note)::INTEGER AS lowest,
+       MAX(note)::INTEGER AS highest
+FROM midi_notes('__TEST_DIR__/duckdb_midi_written_test.mid');
+----
+3	60	67
